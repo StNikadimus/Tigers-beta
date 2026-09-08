@@ -970,8 +970,14 @@
 </head>
 <body>
 
+<!-- ===== LOADING (prikrije "flash" landinga, dokler ne vemo, ali si že prijavljen) ===== -->
+<div id="loadingScreen" class="screen active" style="align-items:center;justify-content:center;background:var(--black);">
+  <div class="paw-icon" style="animation:pulse 1.4s ease-in-out infinite;">🐯</div>
+</div>
+<style>@keyframes pulse{0%,100%{opacity:0.4;transform:scale(0.95);}50%{opacity:1;transform:scale(1.05);}}</style>
+
 <!-- ===== LANDING ===== -->
-<div id="landing" class="screen active">
+<div id="landing" class="screen">
   <div class="landing-inner">
     <div class="paw-icon">🐯</div>
     <div class="logo-text">TIGERS</div>
@@ -1638,7 +1644,7 @@ var selectedTopupPkg = null;
 // Poveča to ob VSAKEM deployu spremenjene datoteke — s tem app zazna,
 // da obstaja nova verzija (pomembno za Add-to-Home-Screen bližnjice na
 // iPhone, ki sicer ne preverjajo samodejno za posodobitve).
-var APP_VERSION = '2026-09-08.2';
+var APP_VERSION = '2026-09-08.3';
 
 var STARTING_COINS = 500;
 var DAILY_BONUS = 50;
@@ -2176,12 +2182,22 @@ function logout() {
 // persistence zgoraj) že pozna prijavljenega uporabnika, ga naložimo
 // naravnost naprej — brez ponovne 2FA, saj je bil email enkrat za vselej
 // preverjen že ob registraciji. Seja ostane, dokler se ročno ne odjaviš.
+// Do takrat, ko Firebase to preveri (kratek trenutek), je viden samo
+// #loadingScreen — landing se pokaže šele, ko zares vemo, da nihče ni
+// prijavljen, da ni "flash-a" landing strani pred samodejno prijavo.
+var authCheckDone = false;
 auth.onAuthStateChanged(function(user) {
-  if (!user) return;
+  authCheckDone = true;
+  if (!user) { setScreen('landing'); return; }
   if (currentUser) return; // že obdelano (ravno prijavljen skozi doLogin/doRegister)
   if (pendingUid) return;  // ravno teče 2FA za registracijo — ne mešaj vmes
   loadCurrentUserAndEnter(user.uid);
 });
+// Varnostna mreža: če se npr. zaradi slabe povezave Firebase ne odzove
+// dovolj hitro, po 4s vseeno pokažemo landing namesto večnega nalaganja.
+setTimeout(function() {
+  if (!authCheckDone) setScreen('landing');
+}, 4000);
 
 // ===== DAILY BONUS =====
 function checkDailyBonus() {
