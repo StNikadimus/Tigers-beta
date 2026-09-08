@@ -175,7 +175,11 @@
   .nav-user {
     color:var(--muted); font-size:14px; font-weight:600;
     letter-spacing:1px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    max-width:150px;
   }
+  .btn-admin, .btn-sm { display:flex; align-items:center; gap:5px; }
+  .btn-icon { display:inline-block; }
   .btn-admin {
     background:transparent; border:1px solid #333;
     color:var(--muted); cursor:pointer;
@@ -405,6 +409,18 @@
   .form-row input:focus, .form-row textarea:focus { border-color:var(--orange-bright); }
   .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
   @media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+
+  /* ===== NAVBAR — MOBILE ===== */
+  @media(max-width:640px){
+    .navbar { padding:0 10px; height:52px; gap:6px; }
+    .nav-logo { font-size:17px; letter-spacing:1px; white-space:nowrap; }
+    .nav-right { gap:6px; }
+    .nav-coins { padding:4px 8px; font-size:14px; }
+    .nav-user { max-width:64px; font-size:11px; }
+    .btn-notif { padding:5px 8px; }
+    .btn-admin, .btn-sm { padding:5px 8px; font-size:13px; }
+    .btn-label { display:none; }
+  }
   .btn-create {
     background:var(--orange); color:#000;
     border:none; cursor:pointer;
@@ -1041,8 +1057,8 @@
       <button class="btn-notif" id="notifBtn" onclick="toggleNotifications()">
         🔔<span class="notif-badge hidden" id="notifBadge">0</span>
       </button>
-      <button class="btn-admin" onclick="showAdminLogin()">⚙ ADMIN</button>
-      <button class="btn-sm" onclick="logout()">ODJAVA</button>
+      <button class="btn-admin" onclick="showAdminLogin()"><span class="btn-icon">⚙</span><span class="btn-label">ADMIN</span></button>
+      <button class="btn-sm" onclick="logout()"><span class="btn-icon">⏻</span><span class="btn-label">ODJAVA</span></button>
     </div>
   </nav>
 
